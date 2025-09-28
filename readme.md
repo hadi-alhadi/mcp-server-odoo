@@ -1,6 +1,7 @@
-# 🐍 Odoo Accounting MCP Server
+# 🐍 Odoo MCP Server
 
-This is a simplified, non-production-ready Model Context Protocol (MCP) server designed for experimental integration with **Odoo Accounting** via XML-RPC. Specifically tailored for use with [Claude Desktop](https://claude.ai), this project focuses on enabling AI tools to query and analyze **account journal entries** for audit purposes. While it allows interaction with Odoo accounting data, its current scope is limited to this specific use case and is not intended for production environments. Future exploration might consider expanding to other accounting-related data, such as invoices, depending on the outcomes of the initial focus.
+This project provides a **lightweight, experimental Model Context Protocol (MCP) server** for integrating with **Odoo** via XML-RPC.  
+It is primarily designed for use with [Claude Desktop](https://claude.ai), enabling AI tools to query and analyze a wide range of Odoo accounting data.  
 
 ---
 
@@ -32,7 +33,7 @@ Follow these steps to set up and run the Odoo Accounting MCP Server:
 ### 1. 📅 Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/mcp-server-odoo.git
+git clone https://github.com/hadi-alhadi/mcp-server-odoo.git
 cd mcp-server-odoo
 ```
 
@@ -91,9 +92,9 @@ Update your `claude_desktop_config.json` file with the following configuration (
 {
   "mcpServers": {
     "odoo": {
-      "command": "/Users/hadialhadi/Documents/mcp-server-odoo/.venv/bin/python",
-      "cwd": "/Users/hadialhadi/Documents/mcp-server-odoo",
-      "args": ["/Users/hadialhadi/Documents/mcp-server-odoo/main.py"],
+      "command": "/path/to/repo/mcp-server-odoo/.venv/bin/python",
+      "cwd": "/path/to/repo/mcp-server-odoo",
+      "args": ["/path/to/repo/mcp-server-odoo/main.py"],
       "env": {
         "ODOO_URL": "http://localhost:8069",
         "ODOO_DB": "your_db",
@@ -104,11 +105,6 @@ Update your `claude_desktop_config.json` file with the following configuration (
   }
 }
 ```
-
-**Important Notes:**
-
-- Ensure the `cwd` path in the configuration points to the correct directory of your `odoo_account_mcp` project.
-- Replace the placeholder Odoo credentials with your actual Odoo instance details.
 
 ---
 

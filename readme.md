@@ -3,26 +3,71 @@
 This project provides a **lightweight, experimental Model Context Protocol (MCP) server** for integrating with **Odoo** via XML-RPC.  
 It is primarily designed for use with [Claude Desktop](https://claude.ai), enabling AI tools to query and analyze a wide range of Odoo accounting data.  
 
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.95.0+-00a393.svg)](https://fastapi.tiangolo.com/)
+
+## 📑 Table of Contents
+
+- [Overview](#-odoo-mcp-server)
+- [What is MCP?](#-what-is-mcp)
+- [Key Features](#-key-features)
+- [Project Architecture](#-project-architecture)
+- [Setup Guide](#️-setup-guide)
+- [Environment Variables](#-environment-variables)
+- [Tools Directory](#-tools-directory)
+- [API Documentation](#-api-documentation)
+- [Claude Desktop Integration](#-claude-desktop-integration)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
+
 ---
 
 ### 🔍 Example: Claude Detecting MCP Tool
 
 ![MCP Tool Preview](assets/mcp_tool_preview.png)
 
+## 🤖 What is MCP?
+
+The **Model Context Protocol (MCP)** is a standardized interface that allows AI assistants like Claude to interact with external tools and data sources. MCP enables Claude to:
+
+- Access real-time data from your Odoo instance
+- Perform complex queries on your accounting data
+- Analyze financial information without manual data entry
+- Provide insights based on your actual business data
+
+This server implements the MCP specification to create a bridge between Claude and your Odoo ERP system.
 
 ## 🚀 Key Features
 
-- **Secure Odoo Connection:** Establish a secure connection to your Odoo instance using environment variables or a dedicated configuration file.
-- **Accounting Data Tools:** Provides specialized tools to efficiently search and retrieve relevant accounting information:
-  - Journal Entries: Access and analyze posted journal entries
-  - Invoices & Bills: Retrieve customer invoices, vendor bills, and credit notes
-  - Chart of Accounts: Access account hierarchy and balances for GL accounts, bank accounts, etc.
-  - Partners: Retrieve customer and vendor information including contact details
-  - Journals: Access journal types and settings for sales, purchases, bank, cash, etc.
-  - Analytic Accounts: Retrieve project and cost center information for financial analysis
-- **Claude AI Ready:** Fully compliant with the Model Context Protocol, ensuring smooth integration with Claude Desktop.
-- **RESTful API (via FastAPI):** Offers a simple and robust FastAPI server for exposing RESTful endpoints.
-- **Flexible Configuration:** Easily configure the server through Claude Desktop's configuration settings.
+- **Secure Odoo Connection**: Connect to your Odoo instance using environment variables or a configuration file.  
+- **Accounting Data Access**: Retrieve and analyze essential records, including:  
+  - **Journals & Entries** – access both journal configurations (sales, purchase, bank, cash, etc.) and their corresponding posted entries for audits and reporting  
+  - **Invoices & Bills** – customer invoices, vendor bills, and credit notes  
+  - **Chart of Accounts** – account hierarchy, balances, and classifications  
+  - **Partners** – customer and vendor profiles with contact details  
+  - **Analytic Accounts** – project and cost center data for financial analysis  
+- **Claude AI Integration**: Fully supports the Model Context Protocol (MCP) for seamless use with Claude Desktop.  
+- **RESTful API**: Powered by FastAPI, offering simple and reliable endpoints.  
+- **Flexible Configuration**: Customize settings easily via environment variables or Claude Desktop.  
+
+## 🏗️ Project Architecture
+
+The project consists of several key components that work together:
+
+- **main.py**: Entry point that initializes the MCP server and handles the stdio communication
+- **server.py**: Implements the MCP protocol and defines the API endpoints
+- **odoo_client.py**: Manages the XML-RPC connection to Odoo and provides methods for data retrieval
+- **tools/**: Directory containing modules for different Odoo data types:
+  - **accounts/**: Chart of accounts and account balances
+  - **analytic_accounts/**: Project and cost center data
+  - **invoices/**: Customer invoices and vendor bills
+  - **journals/**: Journal configurations and entries
+  - **moves/**: Accounting moves and entries
+  - **partners/**: Customer and vendor information
+
+The server uses FastAPI for the REST endpoints and the MCP protocol for communication with Claude Desktop.
 
 ---
 
@@ -48,6 +93,8 @@ ODOO_USERNAME=your_odoo_user_name
 ODOO_PASSWORD=your_odoo_password
 ```
 
+See the [Environment Variables](#-environment-variables) section for more details.
+
 ### 3. 🏗️ Set Up Virtual Environment
 
 It's recommended to use a virtual environment to manage project dependencies:
@@ -59,7 +106,11 @@ python -m venv .venv
 Activate it:
 
 ```bash
-.\.venv\Scripts activate
+# Windows
+.\.venv\Scripts\activate
+
+# Unix/Mac
+source .venv/bin/activate
 ```
 
 ### 4. 📁 Install Dependencies
@@ -79,6 +130,47 @@ python main.py
 ```
 
 The server will typically start and be accessible at `http://localhost:8000`.
+
+## 🔧 Environment Variables
+
+The following environment variables can be configured in your `.env` file or directly in the Claude Desktop configuration:
+
+| Variable | Required | Description | Default |
+|----------|----------|-------------|---------|
+| `ODOO_URL` | Yes | Base URL of your Odoo instance | - |
+| `ODOO_DB` | Yes | Database name | - |
+| `ODOO_USERNAME` | Yes | Username for authentication | - |
+| `ODOO_PASSWORD` | Yes | Password for authentication | - |
+| `ODOO_PORT` | No | Custom port if not using standard HTTP/HTTPS ports | 80/443 |
+| `ODOO_PROTOCOL` | No | Protocol to use (http or https) | http |
+
+## 📁 Tools Directory
+
+The `tools/` directory contains specialized modules for different Odoo data types:
+
+- **accounts/**: Functions for retrieving account information and chart of accounts
+- **analytic_accounts/**: Functions for accessing analytic accounting data
+- **invoices/**: Methods for querying customer invoices and vendor bills
+- **journals/**: Tools for accessing journal configurations and entries
+- **moves/**: Functions for retrieving accounting moves and entries
+- **partners/**: Methods for accessing customer and vendor information
+
+Each module provides specific functions that are exposed through the API endpoints.
+
+## 🔌 API Documentation
+
+The server exposes the following API endpoints:
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/accounts` | GET | Retrieve chart of accounts |
+| `/invoices` | GET | Get customer invoices and vendor bills |
+| `/journals` | GET | Access journal configurations |
+| `/partners` | GET | Retrieve customer and vendor information |
+| `/moves` | GET | Get accounting moves and entries |
+| `/recent_entries` | GET | Retrieve recent journal entries |
+
+All endpoints return JSON responses and support filtering via query parameters.
 
 ---
 
@@ -105,6 +197,39 @@ Update your `claude_desktop_config.json` file with the following configuration (
   }
 }
 ```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+1. **Connection Errors**:
+   - Verify your Odoo server is running and accessible
+   - Check that your credentials in the `.env` file are correct
+   - Ensure your network allows connections to the Odoo server
+
+2. **Authentication Failures**:
+   - Confirm your Odoo username and password are correct
+   - Verify the database name is correct
+
+3. **Missing Data**:
+   - Ensure your Odoo user has sufficient permissions to access the requested data
+   - Check that the modules for the data you're requesting are installed in Odoo
+
+### Debugging
+
+If you encounter issues, you can enable more detailed logging by setting the `DEBUG` environment variable to `True`.
+
+## 🤝 Contributing
+
+Contributions to the Odoo MCP Server are welcome! Here's how you can contribute:
+
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/your-feature-name`
+3. **Make your changes**
+4. **Run tests** to ensure your changes don't break existing functionality
+5. **Submit a pull request**
+
+Please follow the existing code style and include appropriate documentation for new features.
 
 ---
 
